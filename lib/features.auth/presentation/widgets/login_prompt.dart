@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart';
+
+class LoginPrompt extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+  const LoginPrompt({super.key,required this.onTap,required this.subtitle,required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        onTap: onTap,
+        child: RichText(
+            text: TextSpan(
+                text: "Haven't already have an account ?",
+                style: TextStyle(color: Colors.grey),
+                children: [
+                  TextSpan(
+                      text: "Click here to register",
+                      style: TextStyle(color: Colors.blue))
+                ])),
+      ),
+    );
+  }
+}

@@ -1,20 +1,33 @@
 import 'package:chat_app/core/theme.dart';
 import 'package:flutter/material.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController _usernameController = TextEditingController();
+class _LoginPageState extends State<LoginPage> {
+
   final TextEditingController _emailNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  void _showInputValues(){
 
+      String email = _emailNameController.text;
+      String password =_passwordController.text;
 
+      print("Email: $email - Password: $password");
+  }
+
+  @override
+  void dispose() {
+
+   _passwordController.dispose();
+   _emailNameController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,15 +38,12 @@ class _RegisterPageState extends State<RegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildTextInput("UserName", Icons.person, _usernameController),
-              SizedBox(
-                height: 20,
-              ),
+
               _buildTextInput("Email", Icons.person, _emailNameController),
               SizedBox(
                 height: 20,
               ),
-              _buildTextInput("Password", Icons.person, _passwordController),
+              _buildTextInput("Password", Icons.person, _passwordController,isPassword: true),
               SizedBox(
                 height: 20,
               ),
@@ -83,14 +93,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _buildRegisterButton() {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: _showInputValues,
       style: ElevatedButton.styleFrom(
           backgroundColor: DefaultColors.buttonColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           padding: EdgeInsets.symmetric(vertical: 15)),
       child: Text(
-        "Register",
+        "Login",
         style: TextStyle(color: Colors.grey),
       ),
     );
@@ -102,11 +112,11 @@ class _RegisterPageState extends State<RegisterPage> {
         onTap: () {},
         child: RichText(
             text: TextSpan(
-                text: "Already have an account ?",
+                text: "Haven't already have an account ?",
                 style: TextStyle(color: Colors.grey),
                 children: [
               TextSpan(
-                  text: "Click here to login",
+                  text: "Click here to register",
                   style: TextStyle(color: Colors.blue))
             ])),
       ),
