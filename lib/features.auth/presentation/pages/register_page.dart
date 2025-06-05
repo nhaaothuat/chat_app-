@@ -1,6 +1,11 @@
-import 'package:chat_app/core/theme.dart';
+import 'package:chat_app/features.auth/presentation/bloc/auth_bloc.dart';
+import 'package:chat_app/features.auth/presentation/bloc/auth_event.dart';
+import 'package:chat_app/features.auth/presentation/bloc/auth_state.dart';
+import 'package:chat_app/features.auth/presentation/widgets/auth_button.dart';
 import 'package:chat_app/features.auth/presentation/widgets/auth_input_field.dart';
+import 'package:chat_app/features.auth/presentation/widgets/login_prompt.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,21 +19,31 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _showInputValues(){
-      String username = _usernameController.text;
-      String email = _emailNameController.text;
-      String password =_passwordController.text;
-
-      print("UserName: $username - Email: $email - Password: $password");
-  }
+  // void _showInputValues(){
+  //     String username = _usernameController.text;
+  //     String email = _emailNameController.text;
+  //     String password =_passwordController.text;
+  //
+  //     print("UserName: $username - Email: $email - Password: $password");
+  // }
 
   @override
   void dispose() {
-   _usernameController.dispose();
-   _passwordController.dispose();
-   _emailNameController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _emailNameController.dispose();
     super.dispose();
   }
+
+  void _onRegister() {
+    // _showInputValues();
+    BlocProvider.of<AuthBloc>(context).add(RegisterEvent(
+        username: _usernameController.text,
+        email: _emailNameController.text,
+        password: _passwordController.text,));
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,92 +54,53 @@ class _RegisterPageState extends State<RegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-
-              AuthInputField(hint: "UserName", controller: _usernameController,  icon: Icons.person),
+              AuthInputField(
+                  hint: "UserName",
+                  controller: _usernameController,
+                  icon: Icons.person),
               SizedBox(
                 height: 20,
               ),
-
-              AuthInputField(hint:"Email", controller: _emailNameController, icon: Icons.person),
+              AuthInputField(
+                  hint: "Email",
+                  controller: _emailNameController,
+                  icon: Icons.person),
               SizedBox(
                 height: 20,
               ),
-              _buildTextInput("Password", Icons.person, _passwordController,isPassword: true),
+              AuthInputField(
+                  hint: "Password",
+                  controller: _passwordController,
+                  icon: Icons.person,
+                  isPassword: true),
+              BlocConsumer<AuthBloc, AuthState>(builder: (context, state) {
+                if (state is AuthLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return AuthButton(text: "Register", onPressed: _onRegister);
+              }, listener: (context, state) {
+                if (state is AuthSuccess) {
+                  Navigator.pushNamed(context, "/login");
+                } else if (state is AuthFailed) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.error)),
+                  );
+                }
+              }),
               SizedBox(
                 height: 20,
               ),
-              _buildRegisterButton(),
-              SizedBox(
-                height: 20,
-              ),
-              _buildLoginButton()
+              LoginPrompt(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                  subtitle: "Click here to login",
+                  title: "Already have an account")
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextInput(
-      String hint, IconData icon, TextEditingController controller,
-      {bool isPassword = false}) {
-    return Container(
-      decoration: BoxDecoration(
-          color: DefaultColors.sentMessageInput,
-          borderRadius: BorderRadius.circular(25)),
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: Colors.grey,
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-              child: TextField(
-            controller: controller,
-            obscureText: isPassword,
-            decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: TextStyle(color: Colors.grey),
-                border: InputBorder.none),
-            style: TextStyle(color: Colors.white),
-          ))
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRegisterButton() {
-    return ElevatedButton(
-      onPressed: _showInputValues,
-      style: ElevatedButton.styleFrom(
-          backgroundColor: DefaultColors.buttonColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          padding: EdgeInsets.symmetric(vertical: 15)),
-      child: Text(
-        "Register",
-        style: TextStyle(color: Colors.grey),
-      ),
-    );
-  }
-
-  Widget _buildLoginButton() {
-    return Center(
-      child: GestureDetector(
-        onTap: () {},
-        child: RichText(
-            text: TextSpan(
-                text: "Already have an account ?",
-                style: TextStyle(color: Colors.grey),
-                children: [
-              TextSpan(
-                  text: "Click here to login",
-                  style: TextStyle(color: Colors.blue))
-            ])),
       ),
     );
   }
