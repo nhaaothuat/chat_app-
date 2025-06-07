@@ -18,11 +18,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final user = await registerUseCase.call(
-          event.email, event.password, event.username);
+        event.username, event.email, event.password );
 
       emit(AuthSuccess(message: "Registration succcessfull"));
     } catch (e) {
-      emit(AuthFailed(error: "Failed"));
+      emit(AuthFailed(error: e.toString()));
     }
   }
 

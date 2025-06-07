@@ -19,13 +19,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // void _showInputValues(){
-  //     String username = _usernameController.text;
-  //     String email = _emailNameController.text;
-  //     String password =_passwordController.text;
-  //
-  //     print("UserName: $username - Email: $email - Password: $password");
-  // }
+  void _showInputValues(){
+      String username = _usernameController.text;
+      String email = _emailNameController.text;
+      String password =_passwordController.text;
+
+      print("UserName: $username - Email: $email - Password: $password");
+  }
 
   @override
   void dispose() {
@@ -36,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _onRegister() {
-    // _showInputValues();
+    _showInputValues();
     BlocProvider.of<AuthBloc>(context).add(RegisterEvent(
         username: _usernameController.text,
         email: _emailNameController.text,
@@ -64,14 +64,14 @@ class _RegisterPageState extends State<RegisterPage> {
               AuthInputField(
                   hint: "Email",
                   controller: _emailNameController,
-                  icon: Icons.person),
+                  icon: Icons.email),
               SizedBox(
                 height: 20,
               ),
               AuthInputField(
                   hint: "Password",
                   controller: _passwordController,
-                  icon: Icons.person,
+                  icon: Icons.lock,
                   isPassword: true),
               BlocConsumer<AuthBloc, AuthState>(builder: (context, state) {
                 if (state is AuthLoading) {

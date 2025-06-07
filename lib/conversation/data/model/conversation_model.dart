@@ -1,0 +1,18 @@
+import 'package:chat_app/conversation/domain/enities/conversation_enity.dart';
+
+class ConversationModel extends ConversationEnity {
+  ConversationModel(
+      {required id,
+      required participantName,
+      required lastMessage,
+      required lastMessageTime}): super(
+    id: id,
+    participantName: participantName,
+    lastMessage: lastMessage,
+    lastMessageTime: lastMessageTime
+  );
+
+  factory ConversationModel.fromJson(Map<String, dynamic> json){
+    return ConversationModel(id: json['id'], participantName: json['participantName'], lastMessage: json['lastMessage'], lastMessageTime: json['lastMessageTime']);
+  }
+}

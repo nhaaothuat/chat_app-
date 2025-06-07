@@ -4,5 +4,5 @@ class UserEnity{
   final String username;
   final String token;
 
-  UserEnity({required this.id,required this.email, required this.username,this.token=""});
+  UserEnity({required this.id,required this.username,required this.email ,this.token=""});
 }
