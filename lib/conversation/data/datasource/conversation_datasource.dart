@@ -9,6 +9,10 @@ class ConversationDataSource{
 
   Future<List<ConversationModel>> fetchConversations() async{
     String token = await _storage.read(key: 'token') ?? '';
+    // if (token.isEmpty) {
+    //   throw Exception("Missing token. Please login.");
+    // }
+    // String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImMzNDFlZjY1LWY4ZmUtNDZiNC1hNTUzLTZjYzhlNDZlNjQxZiIsImlhdCI6MTc0OTQ1NjY4NywiZXhwIjoxNzQ5NDkyNjg3fQ.wjW-dhZ3Fe6Vu32d-e0UMU_G_3QpeSScqi8xDMcZ6-g";
     final res = await http.get(
       Uri.parse('${baseUrl}'),
       headers:{
@@ -16,8 +20,10 @@ class ConversationDataSource{
       }
     );
 
+    print(res.body);
     if(res.statusCode == 200){
       List data = jsonDecode(res.body);
+
       return data.map((e)=> ConversationModel.fromJson(e)).toList();
     }else{
       throw Exception("Failed to fetch conversation");
