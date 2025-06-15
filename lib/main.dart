@@ -1,4 +1,8 @@
-import 'package:chat_app/chat_page.dart';
+import 'package:chat_app/chat/data/datasource/message_datasource.dart';
+import 'package:chat_app/chat/data/repositories/message_repo_imple.dart';
+import 'package:chat_app/chat/domain/usecases/fetch_message_us.dart';
+import 'package:chat_app/chat/presentation/bloc/chat_bloc.dart';
+import 'package:chat_app/chat/presentation/pages/chat_page.dart';
 import 'package:chat_app/conversation/data/datasource/conversation_datasource.dart';
 import 'package:chat_app/conversation/data/repositories/conversation_repository.dart';
 import 'package:chat_app/conversation/domain/repositories/conversation_repository.dart';
@@ -21,17 +25,26 @@ import 'package:flutter/material.dart';
 
 void main() {
   final authRepository = AuthRepoImple(authDataSource: AuthDataSource());
-  final conversationRepository = ConversationImple(conversationDataSource: ConversationDataSource());
+  final conversationRepository =
+      ConversationImple(conversationDataSource: ConversationDataSource());
+ final messageRepository =MessageImplement(messageDataSource: MessageDataSource());
+
   runApp(MyApp(
     authRepoImple: authRepository,
     conversationImple: conversationRepository,
+    messageImplement: messageRepository,
   ));
 }
 
 class MyApp extends StatelessWidget {
   final AuthRepoImple authRepoImple;
   final ConversationImple conversationImple;
-  const MyApp({super.key, required this.authRepoImple, required this.conversationImple});
+  final MessageImplement messageImplement;
+  const MyApp(
+      {super.key,
+      required this.authRepoImple,
+      required this.conversationImple,
+      required this.messageImplement});
 
   // This widget is the root of your application.
   @override
@@ -43,18 +56,23 @@ class MyApp extends StatelessWidget {
                 loginUseCase: LoginUseCase(repository: authRepoImple),
                 registerUseCase: RegisterUseCase(repository: authRepoImple))),
         BlocProvider(
-            create: (_) => ConversationBloc(fetchConversationsUseCase: FetchConversationUseCase(conversationImple)))
+            create: (_) => ConversationBloc(
+                fetchConversationsUseCase:
+                    FetchConversationUseCase(conversationImple))),
+
+        BlocProvider(create:
+        (_)=> ChatBloc(fetchMessageUseCase: FetchMessageUseCase(repository: messageImplement))
+        )
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: AppTheme.darkTheme,
         debugShowCheckedModeBanner: false,
-        home: RegisterPage(),
+        home: LoginPage(),
         routes: {
           '/login': (_) => LoginPage(),
           '/register': (_) => RegisterPage(),
-          '/chat': (_) => ChatPage(),
-          '/conversation':(_)=>ConversationPage(),
+          '/conversation': (_) => ConversationPage(),
         },
       ),
     );

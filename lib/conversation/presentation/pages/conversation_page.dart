@@ -1,3 +1,4 @@
+import 'package:chat_app/chat/presentation/pages/chat_page.dart';
 import 'package:chat_app/conversation/presentation/bloc/conversation_bloc.dart';
 import 'package:chat_app/conversation/presentation/bloc/conversation_event.dart';
 import 'package:chat_app/conversation/presentation/bloc/conversation_state.dart';
@@ -13,10 +14,8 @@ class ConversationPage extends StatefulWidget {
 }
 
 class _ConversationPageState extends State<ConversationPage> {
-
   @override
   void initState() {
-
     super.initState();
     BlocProvider.of<ConversationBloc>(context).add(FetchConversations());
   }
@@ -44,22 +43,21 @@ class _ConversationPageState extends State<ConversationPage> {
                 "Recent",
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-    ),
-              Container(
-                height: 100,
-                padding: EdgeInsets.all(5),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    _buildRecentContact("Test1", context),
-                    _buildRecentContact("Test2", context),
-                    _buildRecentContact("Test3", context),
-                    _buildRecentContact("Test4", context),
-                    _buildRecentContact("Test5", context)
-                  ],
-                ),
+            ),
+            Container(
+              height: 100,
+              padding: EdgeInsets.all(5),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildRecentContact("Test1", context),
+                  _buildRecentContact("Test2", context),
+                  _buildRecentContact("Test3", context),
+                  _buildRecentContact("Test4", context),
+                  _buildRecentContact("Test5", context)
+                ],
               ),
-
+            ),
             SizedBox(
               height: 10,
             ),
@@ -70,25 +68,42 @@ class _ConversationPageState extends State<ConversationPage> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(50),
                       topRight: Radius.circular(50))),
-                  child: BlocBuilder<ConversationBloc,ConversationsState>(
-                    builder: (context,state){
-                      if(state is ConversationsLoading){
-                        return Center(child: CircularProgressIndicator(),);
-                      }else if(state is ConversationsLoaded){
-                        return ListView.builder(
-                          itemCount: state.conversations.length,
-                          itemBuilder: (context,index){
-                            final conversation = state.conversations[index];
-                            return _buildMessageTitle(conversation.participantName, conversation.lastMessage, conversation.lastMessageTime.toString());
-                          },
-                        );
-                      }else if(state is ConversationsError){
-                        return Center(child: Text(state.message),);
-                      }
-                      return Center(child: Text("No converstation founded"),);
-                    },
-
-                  ),
+              child: BlocBuilder<ConversationBloc, ConversationsState>(
+                builder: (context, state) {
+                  if (state is ConversationsLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is ConversationsLoaded) {
+                    return ListView.builder(
+                      itemCount: state.conversations.length,
+                      itemBuilder: (context, index) {
+                        final conversation = state.conversations[index];
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatPage(
+                                          conversationId: conversation.id,
+                                          mate: conversation.participantName)));
+                            },
+                            child: _buildMessageTitle(
+                                conversation.participantName,
+                                conversation.lastMessage,
+                                conversation.lastMessageTime.toString()));
+                      },
+                    );
+                  } else if (state is ConversationsError) {
+                    return Center(
+                      child: Text(state.message),
+                    );
+                  }
+                  return Center(
+                    child: Text("No converstation founded"),
+                  );
+                },
+              ),
             ))
           ],
         ));

@@ -13,10 +13,11 @@ class ConversationModel extends ConversationEnity {
             lastMessageTime: lastMessageTime);
 
   factory ConversationModel.fromJson(Map<String, dynamic> json) {
+    print('Parsing conversation: $json');
     return ConversationModel(
-        id: json['id'],
-        participantName: json['participantName'],
-        lastMessage: json['lastMessage'],
-        lastMessageTime: DateTime.parse(json['lastMessageTime']));
+        id: json['conversation_id'] ?? '',  //phải nhập đúng key ['conversation_id'] mà API gửi lên
+        participantName: json['paticipant_name'] ?? '',
+        lastMessage: json['last_message'] ?? '',
+        lastMessageTime: DateTime.parse(json['last_message_time']));
   }
 }
